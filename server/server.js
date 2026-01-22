@@ -12,7 +12,7 @@ app.use("/posts", postRoutes);
 
 db.sequelize.sync().then( () => {
     app.listen(3001, () =>{
-        console.log('server running on port http://localhost:3001')
+        console.log('server running on port http://localhost:3001/')
     });
 });
 
