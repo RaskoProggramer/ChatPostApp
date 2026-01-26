@@ -1,10 +1,11 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function home() {
     const [listOfPosts, setListOfPosts] = useState([]);
-
+    let history = useNavigate();
     useEffect(() =>{
         axios.get("http://localhost:3001/posts").then((response) => {
         setListOfPosts(response.data);
@@ -15,7 +16,7 @@ function home() {
         <div>
         {listOfPosts.map((value, key) =>{
         return (
-          <div className='post'>
+          <div className='post' key={value.id} onClick={() => {history(`/posts/${value.id}`)}}>
             <div className='title'>{value.title}</div>
             <div className='body'>{value.postText}</div>
             <div className='footer'>{value.username}</div>
