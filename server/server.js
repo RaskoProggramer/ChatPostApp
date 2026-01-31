@@ -9,6 +9,8 @@ app.use(cors());
 //Routers
 const postRoutes = require('./routes/postRoute');
 app.use("/posts", postRoutes);
+const commentRoutes = require('./routes/commentRoute');
+app.use("/comments", commentRoutes);
 
 db.sequelize.sync().then( () => {
     app.listen(3001, () =>{

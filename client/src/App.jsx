@@ -5,22 +5,17 @@ import Create from './pages/createpost';
 import Post from './pages/post';
 
 function App() {
-
   return (
     <div className='App'>
       <Router>
-        <nav>
-          <Link to='/'>Home</Link>
-          <Link to='/createPost'>Create A Post</Link>
-        </nav>
-      
+        <Link to='/'>Home</Link>
+        <Link to='/createPost'>Create A Post</Link>
         <Routes>
           <Route path='/' element={<Home/>}/>
           <Route path='/createPost' element={<Create/>}/>
-           <Route path='/posts/:id' element={<Post/>}/>
+          <Route path='/posts/:id' element={<Post/>}/>
         </Routes>
       </Router>
-
     </div>
   )
 }
