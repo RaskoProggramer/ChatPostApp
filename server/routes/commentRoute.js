@@ -20,7 +20,7 @@ router.post("/", async (req, res) => {
         const comment = await Comments.create(req.body);
         res.json(comment);
     }catch (e){
-        console.log("error creating post " + e);
+        console.log("error creating comment " + e);
     }
     
 })
