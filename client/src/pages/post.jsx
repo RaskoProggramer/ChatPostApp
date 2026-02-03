@@ -18,11 +18,15 @@ function post() {
     }, []);
 
     const addcomment = () => {
-        axios.post("http://localhost:3001/comments", {PostId: id , comment : newComment}).then((response) => {
+        try {
+           axios.post("http://localhost:3001/comments", {PostId: id , comment : newComment}).then((response) => {
             const commentToAdd = {comment: newComment}
             setComments([...comments, commentToAdd])
             setNewComment("");
-        });
+        }); 
+        } catch (error) {
+          console.log(error);  
+        }   
     }
 
   return (

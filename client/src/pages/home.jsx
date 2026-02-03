@@ -7,9 +7,14 @@ function home() {
     const [listOfPosts, setListOfPosts] = useState([]);
     let history = useNavigate();
     useEffect(() =>{
+      try {
         axios.get("http://localhost:3001/posts").then((response) => {
         setListOfPosts(response.data);
         });
+      } catch (error) {
+        console.log(error)
+      }
+       
     }, []);
 
     return (
