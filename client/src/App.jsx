@@ -10,10 +10,12 @@ function App() {
   return (
     <div className='App'>
       <Router>
-        <Link to='/'>Home</Link>
-        <Link to='/createPost'>Create A Post</Link>
-        <Link to='/login'>Login</Link>
-        <Link to='/registration'>Registration</Link>
+        <div className='navbar'>
+          <Link to='/'>Home</Link>
+          <Link to='/createPost'>Create A Post</Link>
+          <Link to='/login'>Login</Link>
+          <Link to='/registration'>Registration</Link>
+        </div>
         <Routes>
           <Route path='/' element={<Home/>}/>
           <Route path='/createPost' element={<Create/>}/>
