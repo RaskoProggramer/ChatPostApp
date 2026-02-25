@@ -18,8 +18,14 @@ router.get('/:postId', async (req, res) =>{
 
 router.post("/", validateToken, async (req, res) => {
     try{
-        const comment = await Comments.create(req.body);
-        res.json(comment);
+        const comment = req.body;
+        if (!req.user) {
+            return res.status(401).json({ error: "User not authenticated" });
+        }
+        comment.username = req.user.username;
+        
+        const newComment = await Comments.create(comment);
+        res.json(newComment);
     }catch (e){
         console.log("error creating comment " + e);
     }

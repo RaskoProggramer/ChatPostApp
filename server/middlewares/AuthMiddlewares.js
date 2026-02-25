@@ -1,19 +1,20 @@
-const {verify} = require('jsonwebtoken');
-const { route } = require('../routes/usersRoute');
+const { verify } = require("jsonwebtoken");
 
 const validateToken = (req, res, next) => {
-    const accessToken = req.header("accessToken");
+  const accessToken = req.header("accessToken");
 
-    if (!accessToken) return res.json({ error: "User not loged in"});
-    try {
-        const validToken = verify(accessToken, 'TopSecret');
+  if (!accessToken) {
+    return res.status(401).json({ error: "User not logged in" });
+  }
 
-        if (validToken){
-            return next();
-        }
-    } catch (error) {
-        return res.json({error : error})
-    }
-}
+  try {
+    const validToken = verify(accessToken, "TopSecret");
 
-module.exports = {validateToken};
+    req.user = validToken;   // attach decoded payload
+    next();                  // no need for extra if check
+  } catch (err) {
+    return res.status(401).json({ error: "Invalid token" });
+  }
+};
+
+module.exports = { validateToken };
