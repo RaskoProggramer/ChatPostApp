@@ -34,8 +34,8 @@ router.post("/login", async (req, res) => {
         res.json(accessToken);
     })
 
-    router.get('/auth', validateToken, (req, res) => {
-        res.json(req.user);
+router.get('/auth', validateToken, (req, res) => {
+    res.json(req.user);
     })
 })
 

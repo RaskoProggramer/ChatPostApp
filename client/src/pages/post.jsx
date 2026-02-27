@@ -23,13 +23,13 @@ function post() {
             {PostId: id , comment : newComment},
         {
             headers: {
-                accessToken: sessionStorage.getItem('acessToken'),
+                accessToken: localStorage.getItem('accessToken'),
             }
         }).then((response) => {
             if (response.data.error){
                 alert(response.data.error)
             }
-            const commentToAdd = {comment: newComment}
+            const commentToAdd = {comment: newComment, username: response}
             setComments([...comments, commentToAdd])
             setNewComment("");
         }); 
@@ -63,7 +63,8 @@ function post() {
                 {comments.map((comment, key) => {
                     return (
                         <div key={key} className='comment'>
-                            {comment.comment}
+                            {comment.comment}<br></br>
+                            <lable>Username: {comment.username}</lable>
                         </div>
                     )
                 })}

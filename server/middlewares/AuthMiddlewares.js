@@ -9,11 +9,12 @@ const validateToken = (req, res, next) => {
 
   try {
     const validToken = verify(accessToken, "TopSecret");
-
-    req.user = validToken;   // attach decoded payload
-    next();                  // no need for extra if check
+    req.user = validToken;
+    if (validToken) {
+      return next();
+    }
   } catch (err) {
-    return res.status(401).json({ error: "Invalid token" });
+    return res.json({ error: err });
   }
 };
 
