@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-function home() {
+function Home() {
     const [listOfPosts, setListOfPosts] = useState([]);
     let history = useNavigate();
     useEffect(() =>{
@@ -32,4 +32,4 @@ function home() {
   )
 }
 
-export default home
+export default Home

@@ -4,7 +4,7 @@ import * as Yup from 'yup';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-function createpost() {
+function Create() {
   const [newPost, setNewPost] = useState({});
   let navigate = useNavigate();
   const initialValue = {
@@ -50,4 +50,4 @@ function createpost() {
   )
 }
 
-export default createpost
+export default Create;

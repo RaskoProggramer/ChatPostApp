@@ -3,7 +3,7 @@ import {Formik, Form, Field, ErrorMessage} from 'formik';
 import * as Yup from 'yup'; 
 import axios from 'axios';
 
-function register() {
+function Register() {
     const initialValue = {
         password : "",
         username : ""
@@ -41,4 +41,4 @@ function register() {
   )
 }
 
-export default register
+export default Register;
