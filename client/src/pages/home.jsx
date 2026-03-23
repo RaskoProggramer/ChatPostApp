@@ -2,15 +2,26 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 
 function Home() {
     const [listOfPosts, setListOfPosts] = useState([]);
+    const [likedPosts, setLikedPosts] = useState([]);
     let history = useNavigate();
+
     useEffect(() =>{
       try {
-        axios.get("http://localhost:3001/posts").then((response) => {
-        setListOfPosts(response.data);
-        });
+        axios.get("http://localhost:3001/posts", {
+          headers: {
+            accessToken: localStorage.getItem('accessToken'),
+          }
+        }).then((response) => {
+        setListOfPosts(response.data.allPosts);
+        setLikedPosts(response.data.liked.map((post) => {
+          return post.Likes.map((like) => like.UserId);
+        }).flat()
+       );
+      });
       } catch (error) {
         console.log(error)
       }
@@ -45,6 +56,15 @@ function Home() {
           return post;
           })
         );
+        if (likedPosts.includes(postId)) {
+          setLikedPosts(
+            likedPosts.filter((id) => {
+              return id != postId;
+            })
+          );
+        } else {
+          setLikedPosts([...likedPosts, postId]);
+        }
         });
       } catch (error) {
         console.log(error);
@@ -58,8 +78,21 @@ function Home() {
           <div className='post' key={key}>
             <div className='title'>{value.title}</div>
             <div className='body' onClick={() => {history(`/posts/${value.id}`)}}>{" "}{value.postText}</div>
-            <div className='footer'>{value.username}<button onClick={() => likeAPost(value.id)}>{" "}Like</button>
-            <label>{value.Likes.length}</label></div>
+            <div className="footer">
+              <div className="username">{value.username}</div>
+              <div className="buttons">
+                <ThumbUpIcon
+                  onClick={() => {
+                    likeAPost(value.id);
+                  }}
+                  className={
+                    likedPosts.includes(value.id) ? "unlikeBttn" : "likeBttn"
+                  }
+                />
+
+                <label> {value.Likes.length}</label>
+              </div>
+            </div>
           </div>
         )
       })}

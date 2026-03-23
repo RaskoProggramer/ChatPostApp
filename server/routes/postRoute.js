@@ -1,13 +1,15 @@
 const express = require("express");
 const router = express.Router();
 const {Posts, Likes} = require('../models');
+const {validateToken} = require("../middlewares/AuthMiddlewares");
 
-router.get("/", async (req, res) => {
+router.get("/", validateToken, async (req, res) => {
     try{
         const allPosts = await Posts.findAll({
             include: [Likes]
         });
-        res.json(allPosts);
+        const liked = await Likes.findAll({where: {UserId: req.user.id}});
+        res.json({allPosts, liked});
     } catch (e){
         console.log("error fetching all post "+e)
     }

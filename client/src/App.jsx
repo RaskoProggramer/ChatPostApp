@@ -8,6 +8,7 @@ import Register from './pages/register';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { AuthContext } from './helpers/AuthContext';
+import Pagenotfound from './pages/pagenotfound';
 
 function App() {
   const [authState, setAuthState] = useState({
@@ -66,6 +67,7 @@ function App() {
           <Route path='/posts/:id' element={<Post/>}/>
           <Route path='/login' element={<Login/>}/>
           <Route path='/registration' element={<Register/>}/>
+          <Route path='*' element={<Pagenotfound/>}/>
         </Routes>
       </Router>
       </AuthContext.Provider>
