@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Formik, Form, Field, ErrorMessage} from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
@@ -7,22 +7,29 @@ import { useNavigate } from 'react-router-dom';
 function Create() {
   const [newPost, setNewPost] = useState({});
   let navigate = useNavigate();
+
+  useEffect(() => {
+    if (!localStorage.getItem("accessToken")) {
+      navigate('/login');
+    }
+  }, []);
+  
   const initialValue = {
     title : "",
-    postText : "",
-    username : ""
+    postText : ""
   };
 
   const validationSchema = Yup.object().shape({
     title: Yup.string().required(),
     postText: Yup.string().required(),
-    username: Yup.string().min(3).max(15).required()
   });
 
   const onSubmit = ((data) => {
     try {
-      axios.post("http://localhost:3001/posts", data).then((response) => {
-      navigate('/');
+      axios.post("http://localhost:3001/posts", data, {
+        headers: {accessToken: localStorage.getItem("accessToken")}})
+        .then((response) => {
+          navigate('/');
     });
     } catch (error) {
       console.log(error);
@@ -40,10 +47,7 @@ function Create() {
             <label>Post</label>
             <ErrorMessage name='postText' component='span'/>
             <Field id="inputCreatePost" name='postText' placeholder="Whats on your Mind?"/>
-            <label>Username</label>
-            <ErrorMessage name='username' component='span'/>
-            <Field id="inputCreatePost" name='username' placeholder="e.g Mpho"/>
-            <button type='submit'>Create Post</button>
+             <button type="submit"> Create Post</button>
         </Form>
       </Formik>
     </div>

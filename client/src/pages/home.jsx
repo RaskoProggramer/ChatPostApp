@@ -1,16 +1,22 @@
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import { AuthContext } from '../helpers/AuthContext';
 
 function Home() {
     const [listOfPosts, setListOfPosts] = useState([]);
     const [likedPosts, setLikedPosts] = useState([]);
     let history = useNavigate();
+    const { authState } = React.useContext(AuthContext);
 
+   
     useEffect(() =>{
       try {
+        if (!localStorage.getItem('accessToken')) {
+        history('/login');
+      }else {
         axios.get("http://localhost:3001/posts", {
           headers: {
             accessToken: localStorage.getItem('accessToken'),
@@ -22,6 +28,7 @@ function Home() {
         }).flat()
        );
       });
+    }
       } catch (error) {
         console.log(error)
       }
@@ -86,7 +93,7 @@ function Home() {
                     likeAPost(value.id);
                   }}
                   className={
-                    likedPosts.includes(value.id) ? "unlikeBttn" : "likeBttn"
+                    likedPosts.includes(value.id) ? "likeBttn" : "unlikeBttn"
                   }
                 />
 
