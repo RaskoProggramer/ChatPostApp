@@ -17,7 +17,7 @@ function Register() {
     const onSubmit = (data) => {
         try {
            axios.post('http://localhost:3001/auth', data).then((response) => {
-            console.log(data);
+            alert('Account Created Successfully');
         }); 
         } catch (error) {
            console.log(error) 

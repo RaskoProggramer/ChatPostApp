@@ -1,14 +1,15 @@
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import Home from './pages/home';
-import Create from './pages/createpost';
-import Post from './pages/post';
+import Home from './pages/Home';
+import Create from './pages/Createpost';
+import Post from './pages/Post';
 import Login from './pages/login';
-import Register from './pages/register';
+import Register from './pages/Register';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { AuthContext } from './helpers/AuthContext';
-import PageNotFound from './pages/pagenotfound';
+import PageNotFound from './pages/PageNotFound';
+import Profile from './pages/profile';
 
 function App() {
   const [authState, setAuthState] = useState({
@@ -51,6 +52,7 @@ function App() {
               <>
               <Link to="/"> Home Page</Link>
               <Link to="/posts"> Create A Post</Link>
+              <Link to="/profile"> Profile</Link>
               </>
               ) : (
               <>
@@ -69,6 +71,7 @@ function App() {
           <Route path='/posts' element={<Create/>}/>
           <Route path='/posts/:id' element={<Post/>}/>
           <Route path='/login' element={<Login/>}/>
+          <Route path='/profile/:id' element={<Profile/>}/>
           <Route path='/registration' element={<Register/>}/>
           <Route path='*' element={<PageNotFound/>}/>
         </Routes>

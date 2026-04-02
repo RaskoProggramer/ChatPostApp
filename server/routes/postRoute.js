@@ -25,10 +25,21 @@ router.get('/ById/:id', async (req, res) =>{
     }
 })
 
+router.get('/ByUserId/:id', async (req, res) =>{
+    const {id} = req.params;
+    try {
+        const listOfPosts = await Posts.findAll({where: {UserId: id}, include: [Likes]});
+        res.json(listOfPosts);
+    } catch (error) {
+        console.log('Error fetching post by User Id '+error)
+    }
+})
+
 router.post("/", validateToken, async (req, res) => {
     try{
         const post = req.body;
         post.username = req.user.username;
+        post.UserId = req.user.id;
         await Posts.create(post);
         res.json(post);
     }catch (e){
