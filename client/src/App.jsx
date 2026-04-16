@@ -1,6 +1,6 @@
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import Home from './pages/Home';
+import Home from './pages/home';
 import Create from './pages/Createpost';
 import Post from './pages/Post';
 import Login from './pages/login';
@@ -10,6 +10,7 @@ import axios from 'axios';
 import { AuthContext } from './helpers/AuthContext';
 import PageNotFound from './pages/PageNotFound';
 import Profile from './pages/profile';
+import ChangePassword from './pages/ChangePassword';
 
 function App() {
   const [authState, setAuthState] = useState({
@@ -52,7 +53,6 @@ function App() {
               <>
               <Link to="/"> Home Page</Link>
               <Link to="/posts"> Create A Post</Link>
-              <Link to="/profile"> Profile</Link>
               </>
               ) : (
               <>
@@ -62,7 +62,7 @@ function App() {
               )}
             </div>
             <div className="loggedInContainer">
-              {authState.status && <h1>{authState.username}</h1>}
+              {authState.status && <h1>{authState.username.charAt(0).toUpperCase() + authState.username.slice(1)}</h1>}
               {authState.status && <button onClick={logout}> Logout</button>}
             </div>
           </div>
@@ -74,6 +74,7 @@ function App() {
           <Route path='/profile/:id' element={<Profile/>}/>
           <Route path='/registration' element={<Register/>}/>
           <Route path='*' element={<PageNotFound/>}/>
+          <Route path='/changepassword' element={<ChangePassword/>}/>
         </Routes>
       </Router>
       </AuthContext.Provider>

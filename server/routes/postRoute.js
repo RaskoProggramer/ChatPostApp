@@ -58,4 +58,36 @@ router.delete("/:postId", validateToken, async (req, res) => {
     res.json("Post Deleted");
 });
 
+router.put("/title", validateToken, async (req, res) => {
+    const {title, postId} = req.body;
+    try {
+        await Posts.update({title: title}, {
+            where: {
+                id: postId,
+            }
+            
+        });
+        res.json(title);
+    } catch (error) {
+        console.log('Error updating post by Id '+error)
+    }
+
+});
+
+router.put("/body", validateToken, async (req, res) => {
+    const {Text, postId} = req.body;
+    try {
+        await Posts.update({postText: Text}, {
+            where: {
+                id: postId,
+            }
+            
+        });
+        res.json(Text);
+    } catch (error) {
+        console.log('Error updating post by Id '+error)
+    }
+
+});
+
 module.exports = router;

@@ -50,4 +50,20 @@ router.get('/basicInfo/:id', async (req, res) =>{
     res.json(basicInfo);
 })
 
+router.put('/changepassword', validateToken, async (req, res) => {
+    const {currentPassword, newPassword} = req.body;
+    const user = await Users.findOne({ where: {username: req.user.username}});
+
+    if(!user) return res.json({error : "User Doesn't Exist"});
+
+    bcrypt.compare(currentPassword, user.password).then((match) => {
+        if(!match) return res.json({error: "Current password is incorrect"});
+
+        bcrypt.hash(newPassword, 10).then( (hash) => {
+            Users.update({password: hash}, { where: {username: req.user.username}});
+            res.json("Password updated successfully");
+        });
+    });
+});
+
 module.exports = router;

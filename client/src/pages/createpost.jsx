@@ -24,13 +24,19 @@ function Create() {
     postText: Yup.string().required(),
   });
 
-  const onSubmit = ((data) => {
-    try {
-      axios.post("http://localhost:3001/posts", data, {
-        headers: {accessToken: localStorage.getItem("accessToken")}})
-        .then((response) => {
-          navigate('/');
-    });
+  const onSubmit = (async (data) => {
+   try {
+    await axios.post(
+      "http://localhost:3001/posts",
+      data,
+      {
+        headers: {
+          accessToken: localStorage.getItem("accessToken"),
+        },
+      }
+    );
+
+    navigate("/");
     } catch (error) {
       console.log(error);
     }
@@ -47,7 +53,7 @@ function Create() {
             <label>Post</label>
             <ErrorMessage name='postText' component='span'/>
             <Field id="inputCreatePost" name='postText' placeholder="Whats on your Mind?"/>
-             <button type="submit"> Create Post</button>
+             <button type="submit" onClick={onSubmit}> Create Post</button>
         </Form>
       </Formik>
     </div>

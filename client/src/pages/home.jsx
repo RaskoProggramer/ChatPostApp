@@ -1,110 +1,126 @@
-import React from 'react';
-import { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
-import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import { AuthContext } from '../helpers/AuthContext';
+import ToggleButton from '@mui/material/ToggleButton';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 
 function Home() {
-    const [listOfPosts, setListOfPosts] = useState([]);
-    const [likedPosts, setLikedPosts] = useState([]);
-    let history = useNavigate();
-    const { authState } = React.useContext(AuthContext);
+  const [listOfPosts, setListOfPosts] = useState([]);
+  const [likedPosts, setLikedPosts] = useState([]);
+  const navigate = useNavigate();
+  const { authState } = useContext(AuthContext);
+  const likedPostsSet = new Set(likedPosts);
 
-   
-    useEffect(() =>{
+  // 🔹 Fetch posts
+  useEffect(() => {
+    const fetchPosts = async () => {
       try {
         if (!localStorage.getItem('accessToken')) {
-        history('/login');
-      }else {
-        axios.get("http://localhost:3001/posts", {
-          headers: {
-            accessToken: localStorage.getItem('accessToken'),
-          }
-        }).then((response) => {
-        setListOfPosts(response.data.allPosts);
-        setLikedPosts(response.data.liked.map((post) => {
-          return post.Likes.map((like) => like.UserId);
-        }).flat()
-       );
-      });
-    }
-      } catch (error) {
-        console.log(error)
-      }
-       
-    }, []);
-
-    const likeAPost = (postId) => {
-      try {
-        axios.post("http://localhost:3001/likes", {PostId: postId}, {
-          headers: {
-            accessToken: localStorage.getItem('accessToken'),
-          }
-        }).then((response) => {
-          setListOfPosts(
-            listOfPosts.map((post) => {
-              if (post.id === postId) {
-                // Ensure Likes is always an array
-                const likes = post.Likes || [];
-
-                if (response.data.liked) {
-                  return {
-                    ...post,
-                    Likes: [...likes, 0],
-              };
-            } else {
-                return {
-                  ...post,
-                  Likes: likes.slice(0, -1),
-                };
-              }
-            }
-          return post;
-          })
-        );
-        if (likedPosts.includes(postId)) {
-          setLikedPosts(
-            likedPosts.filter((id) => {
-              return id != postId;
-            })
-          );
+          navigate('/login');
         } else {
-          setLikedPosts([...likedPosts, postId]);
+          const response = await axios.get("http://localhost:3001/posts", {
+            headers: {
+              accessToken: localStorage.getItem('accessToken'),
+            },
+          });
+
+          setListOfPosts(response.data.allPosts);
+
+          setLikedPosts(
+            response.data.liked.map((like) => Number(like.PostId)));
         }
-        });
       } catch (error) {
         console.log(error);
       }
     };
 
-    return (
-        <div>
-        {listOfPosts.map((value, key) =>{
-        return (
-          <div className='post' key={key}>
-            <div className='title'>{value.title}</div>
-            <div className='body' onClick={() => {history(`/posts/${value.id}`)}}>{" "}{value.postText}</div>
-            <div className="footer">
-              <div className="username"><Link to={`/profile/${value.UserId}`}>{value.username}</Link></div>
-              <div className="buttons">
-                <ThumbUpIcon
-                  onClick={() => {
-                    likeAPost(value.id);
-                  }}
-                  className={
-                    likedPosts.includes(value.id) ? "likeBttn" : "unlikeBttn"
-                  }
-                />
+    fetchPosts();
+  }, [navigate]);
 
-                <label> {value.Likes.length}</label>
+  // 🔹 Like / Unlike Post
+  const likeAPost = async (postId) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:3001/likes",
+        { PostId: postId },
+        {
+          headers: {
+            accessToken: localStorage.getItem('accessToken'),
+          },
+        }
+      );
+
+      // Update posts safely
+      setListOfPosts((prevPosts) =>
+        prevPosts.map((post) => {
+          if (post.id === postId) {
+            const likes = post.Likes || [];
+
+            return {
+              ...post,
+              Likes: response.data.liked
+                ? [...likes, {}] // add dummy like
+                : likes.slice(0, -1), // remove one like
+            };
+          }
+          return post;
+        })
+      );
+
+      // Update likedPosts safely
+      setLikedPosts((prevLiked) =>
+        prevLiked.includes(postId)
+          ? prevLiked.filter((id) => id !== postId)
+          : [...prevLiked, postId]
+      );
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  return (
+    <div>
+      {listOfPosts.map((value) => {
+        const isLiked = likedPostsSet.has(value.id);
+
+        return (
+          <div className="post" key={value.id}>
+            <div className="title">{value.title.charAt(0).toUpperCase() + value.username.slice(1)}</div>
+
+            <div
+              className="body"
+              onClick={() => navigate(`/posts/${value.id}`)}
+            >
+              {value.postText.charAt(0).toUpperCase() + value.username.slice(1)}
+            </div>
+
+            <div className="footer">
+              <div className="username">
+                <Link to={`/profile/${value.UserId}`} 
+                style={{ color: "white", textDecoration: "none" }}>
+                  {value.username.charAt(0).toUpperCase() + value.username.slice(1)}
+                </Link>
+              </div>
+
+              <div className="buttons">
+                <ToggleButton
+                value="like"
+                selected={isLiked}
+                onChange={() => likeAPost(value.id)}
+                >
+                  <ThumbUpIcon
+                  sx={{color: isLiked ? "red" : "gray", fontSize: "20px"}}/>
+                </ToggleButton>
+                <label>{value.Likes.length}</label>
               </div>
             </div>
           </div>
-        )
+        );
       })}
     </div>
-  )
+  );
 }
 
-export default Home
+export default Home;

@@ -49,7 +49,7 @@ function Login() {
         onChange={(event) => setPassword(event.target.value)}
       />
 
-      <button onClick={login}>Log In</button>
+      <button onClick={() => login()}>Log In</button>
     </div>
   );
 }
